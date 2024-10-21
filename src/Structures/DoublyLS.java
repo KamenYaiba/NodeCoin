@@ -6,6 +6,7 @@ public class DoublyLS<T> {
         T data;
         Node next = null;
         Node prev = null;
+        
         Node(T data){
             this.data = data;
         }
