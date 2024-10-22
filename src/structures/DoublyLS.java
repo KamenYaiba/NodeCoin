@@ -18,33 +18,42 @@ public class DoublyLS<T> {
     
     
     
-    public void add(T data){
+    public boolean add(T data){
         Node node = new Node(data);
         if(size == 0){
             head = tail = node;
-            return;
+            size++;
+            return true;
         }
         node.prev = tail;
         tail.next = node;
         tail = node;
         
         size++;
+        return true;
     }
     
     
     public boolean insert(T data, long idx){
-        if(idx > size-1)
+        if(idx > size)
             return false;
+        if(idx == size)
+            return add(data);
         
         Node node = new Node(data);
         
-        Node it = head;
+        Node itr = head;
         for(int i = 0; i < idx; i++)
-            it = it.next;
+            itr = itr.next;
         
-        node.prev = it.prev;
-        it.prev = node;
-        node.next = it;
+        if(itr != head)
+            itr.prev.next = node;
+        else
+            head = node;
+        
+        node.prev = itr.prev;
+        itr.prev = node;
+        node.next = itr;
         
         size++;
         return true;
@@ -52,16 +61,24 @@ public class DoublyLS<T> {
     
     
     public boolean remove(long idx){
-        if(idx > size -1)
+        if(idx > size -1 || idx < 0)
             return false;
         
-        Node it = head;
+        Node itr = head;
         for(int i = 0; i < idx; i++)
-            it = it.next;
+            itr = itr.next;
         
-        //loseNode(it);
-        return true;
+        if(detatch(itr)){
+            size--;
+            return true;
+        }
+        return false;
     }
+    
+    public boolean remove(){
+        return remove(size -1);
+    }
+    
     
     private Node search(T data){
         Node it = head;
@@ -71,8 +88,52 @@ public class DoublyLS<T> {
         
         return null;
     }
-        
     
+    
+    private boolean detatch(Node node){
+        try{
+            if(node != head)
+                node.prev.next = node.next;
+            else
+                head = head.next;
+            if(node != tail)
+                node.next.prev = node.prev;
+            else
+                tail = tail.prev;
+        }
+        catch(NullPointerException e){
+            return false;
+        }
+        
+        return true; 
+    }
+     
+    
+    public long getSize(){
+        return size;
+    }
+    
+    
+    @Override
+    public String toString(){
+        if(size == 0)
+            return "[]";
+        
+        StringBuilder sb = new StringBuilder();
+        
+        sb.append("[");
+        Node itr = head;
+        while(itr.next != null){
+            sb.append(itr.data);
+            sb.append(", ");
+            itr = itr.next;
+        }
+        
+        sb.append(itr.data).append("]");
+        
+        return sb.toString();
+    }
+        
     
     
 }
