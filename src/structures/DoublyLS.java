@@ -1,4 +1,4 @@
-package Structures;
+package structures;
 
 // @author mio
 public class DoublyLS<T> {
@@ -59,7 +59,8 @@ public class DoublyLS<T> {
         for(int i = 0; i < idx; i++)
             it = it.next;
         
-        loseNode(it);
+        //loseNode(it);
+        return true;
     }
     
     private Node search(T data){
