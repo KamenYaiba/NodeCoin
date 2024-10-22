@@ -18,7 +18,7 @@ public class DoublyLS<T> {
     
     
     
-    public void insert(T data){
+    public void add(T data){
         Node node = new Node(data);
         if(size == 0){
             head = tail = node;
@@ -27,11 +27,51 @@ public class DoublyLS<T> {
         node.prev = tail;
         tail.next = node;
         tail = node;
+        
+        size++;
     }
     
-    public void insert(T data, long idx){
+    
+    public boolean insert(T data, long idx){
+        if(idx > size-1)
+            return false;
         
+        Node node = new Node(data);
+        
+        Node it = head;
+        for(int i = 0; i < idx; i++)
+            it = it.next;
+        
+        node.prev = it.prev;
+        it.prev = node;
+        node.next = it;
+        
+        size++;
+        return true;
     }
+    
+    
+    public boolean remove(long idx){
+        if(idx > size -1)
+            return false;
+        
+        Node it = head;
+        for(int i = 0; i < idx; i++)
+            it = it.next;
+        
+        loseNode(it);
+    }
+    
+    private Node search(T data){
+        Node it = head;
+        for(int i = 0; i<size; i++)
+            if(data == it.data)
+                return it;
+        
+        return null;
+    }
+        
+    
     
     
 }
