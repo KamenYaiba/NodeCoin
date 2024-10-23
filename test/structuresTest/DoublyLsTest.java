@@ -36,17 +36,17 @@ public class DoublyLsTest {
         if(ls.remove(10))
             System.out.println("TEST 4: FAIL :(");
         else
-            System.out.println("TEST 4: pass \\(^^)/");
+            System.out.println("TEST 4: PASS \\(^^)/");
         
         ls.remove(0);
         ls.remove(0);
         if(ls.toString().equals("[]"))
-            System.out.println("TEST 5: pass \\(^^)/");
+            System.out.println("TEST 5: PASS \\(^^)/");
         else
             System.out.println("TEST 5: FAIL :(");
         
         if(ls.getSize() == 0)
-            System.out.println("TEST 6: pass \\(^^)/");
+            System.out.println("TEST 6: PASS \\(^^)/");
         else
             System.out.println("TEST 6: FAIL :(");
         
