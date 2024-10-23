@@ -1,7 +1,7 @@
 package structures;
 
 // @author mio
-public class NodeCoin<T> {
+public class NodeCoin {
     
     private class Node{
         MaxHeap heap;
@@ -23,31 +23,26 @@ public class NodeCoin<T> {
     private Node head = null;
     private Node tail = null;
     private long size = 0;
+
     
-            
-    
-    public boolean insert(String date){
-        Node node = new Node(date);
-        if(size == 0){
-            head = tail = node;
-            size++;
-            return true;
+    public boolean insert(String date, double amount){
+        Node node;
+        if((node = grap(date)) == null){
+            addNewNode(date);
+            insert(date, amount);
         }
-        node.prevHash = tail;
-        tail.nextHash = node;
-        tail = node;
         
-        size++;
+        node.heap.insert(amount);
         return true;
     }
     
     
-    public double getMax(String date){
+    public Transaction getMax(String date){
         Node node;
         if((node = grap(date)) == null)
-            return -1;
+            return null;
         
-        return node.heap.getMax().amount;
+        return node.heap.getMax();
     }
     
     
@@ -116,5 +111,21 @@ public class NodeCoin<T> {
             itr = itr.nextHash;
         }
         return null;
+    }
+    
+    
+    private boolean addNewNode(String date){
+        Node node = new Node(date);
+        if(size == 0){
+            head = tail = node;
+            size++;
+            return true;
+        }
+        node.prevHash = tail;
+        tail.nextHash = node;
+        tail = node;
+        
+        size++;
+        return true;
     }
 }
