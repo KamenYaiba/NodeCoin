@@ -17,6 +17,13 @@ public class DoublyLS<T> {
     private long size = 0;
     
     
+    public T get(long idx){
+        Node node;
+        if((node = grap(idx)) != null)
+            return node.data;
+        return null;
+    }
+            
     
     public boolean add(T data){
         Node node = new Node(data);
@@ -35,16 +42,14 @@ public class DoublyLS<T> {
     
     
     public boolean insert(T data, long idx){
-        if(idx > size)
-            return false;
         if(idx == size)
             return add(data);
         
         Node node = new Node(data);
         
-        Node itr = head;
-        for(int i = 0; i < idx; i++)
-            itr = itr.next;
+        Node itr;
+        if((itr = grap(idx)) == null)
+            return false;
         
         if(itr != head)
             itr.prev.next = node;
@@ -61,14 +66,11 @@ public class DoublyLS<T> {
     
     
     public boolean remove(long idx){
-        if(idx > size -1 || idx < 0)
+        Node node;
+        if((node = grap(idx)) == null)
             return false;
         
-        Node itr = head;
-        for(int i = 0; i < idx; i++)
-            itr = itr.next;
-        
-        if(detatch(itr)){
+        if(detatch(node)){
             size--;
             return true;
         }
@@ -107,7 +109,21 @@ public class DoublyLS<T> {
         
         return true; 
     }
-     
+    
+    
+    private Node grap(long idx){
+        if(idx == size -1)
+            return tail;
+        if(idx > size -1 || idx < 0)
+            return null;
+        
+        Node itr = head;
+        for(int i = 0; i < idx; i++)
+            itr = itr.next;
+        
+        return itr;
+    }
+    
     
     public long getSize(){
         return size;
@@ -132,8 +148,5 @@ public class DoublyLS<T> {
         sb.append(itr.data).append("]");
         
         return sb.toString();
-    }
-        
-    
-    
+    }   
 }
