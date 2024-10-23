@@ -1,10 +1,6 @@
 package structures;
 
 public class MaxHeap {
-    class Transaction{
-        double amount;
-        double number;
-    }
     
     public Transaction getMax(){
         return null;
@@ -16,6 +12,10 @@ public class MaxHeap {
     
     public boolean isEmpty(){
         return false; //
+    }
+    
+    public boolean insert(double amount){
+        return false;
     }
     
         
