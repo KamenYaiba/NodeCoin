@@ -4,19 +4,19 @@ package structures;
 public class NodeCoin {
     
     private class Node{
-        MaxHeap heap;
+        MaxHeap record;
         String date;
         Node nextHash = null;
         Node prevHash = null;
         
         Node(String date){
             this.date = date;
-            this.heap = new MaxHeap();
+            this.record = new MaxHeap();
         }
         
         @Override
         public String toString(){
-            return "date: " + date + "\n\n" + heap.toString();
+            return "date: " + date + "\n\n" + record.toString();
         }
     }
     
@@ -28,11 +28,9 @@ public class NodeCoin {
     public boolean insert(String date, double amount){
         Node node;
         if((node = grab(date)) == null){
-            addNewNode(date);
-            insert(date, amount);
+            node = addNewNode(date);
         }
-        
-        node.heap.insert(amount);
+        node.record.insert(amount);
         return true;
     }
     
@@ -42,7 +40,7 @@ public class NodeCoin {
         if((node = grab(date)) == null)
             return null;
         
-        return node.heap.getMax();
+        return node.record.getMax();
     }
     
     
@@ -51,7 +49,7 @@ public class NodeCoin {
         if((node = grab(date)) == null)
             return false;
         
-        node.heap.removeMax();
+        node.record.removeMax();
        
         return true;
     }
@@ -62,11 +60,11 @@ public class NodeCoin {
         if((node = grab(date)) == null)
             return null;
         
-        MaxHeap mh = node.heap;
+        MaxHeap record = node.record;
         
         StringBuilder sb = new StringBuilder();
-        while(!mh.isEmpty())
-            sb.append(mh.removeMax().amount).append(" ");
+        while(!record.isEmpty())
+            sb.append(record.removeMax().amount).append(" ");
         
         detatch(node);
         
@@ -114,18 +112,18 @@ public class NodeCoin {
     }
     
     
-    private boolean addNewNode(String date){
+    private Node addNewNode(String date){
         Node node = new Node(date);
         if(size == 0){
             head = tail = node;
             size++;
-            return true;
+            return node;
         }
         node.prevHash = tail;
         tail.nextHash = node;
         tail = node;
         
         size++;
-        return true;
+        return node;
     }
 }
