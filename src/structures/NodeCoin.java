@@ -27,7 +27,7 @@ public class NodeCoin {
     
     public boolean insert(String date, double amount){
         Node node;
-        if((node = grap(date)) == null){
+        if((node = grab(date)) == null){
             addNewNode(date);
             insert(date, amount);
         }
@@ -39,7 +39,7 @@ public class NodeCoin {
     
     public Transaction getMax(String date){
         Node node;
-        if((node = grap(date)) == null)
+        if((node = grab(date)) == null)
             return null;
         
         return node.heap.getMax();
@@ -48,7 +48,7 @@ public class NodeCoin {
     
     public boolean removeMax(String date){
         Node node;
-        if((node = grap(date)) == null)
+        if((node = grab(date)) == null)
             return false;
         
         node.heap.removeMax();
@@ -59,7 +59,7 @@ public class NodeCoin {
     
     public String getAll(String date){
         Node node;
-        if((node = grap(date)) == null)
+        if((node = grab(date)) == null)
             return null;
         
         MaxHeap mh = node.heap;
@@ -80,7 +80,7 @@ public class NodeCoin {
     
     
     public boolean contains(String date){
-        return grap(date) != null;
+        return grab(date) != null;
     }
     
     
@@ -103,7 +103,7 @@ public class NodeCoin {
     }
     
     
-    private Node grap(String date){
+    private Node grab(String date){
         Node itr = head;
         for(int i = 0; i < size; i++){
             if(itr.date.equals(date))
