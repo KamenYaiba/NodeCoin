@@ -280,7 +280,8 @@ public class Solution {
                     break;
 
                 case REMOVE_MAX:
-                    nodeCoin.removeMax(date);
+                    if(!nodeCoin.removeMax(date))
+                        output = "-1";
                     break;
 
                 case GET_ALL:

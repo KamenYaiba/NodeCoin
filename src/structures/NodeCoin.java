@@ -38,7 +38,7 @@ public class NodeCoin {
 
     public Transaction getMax(String date){
         Node node;
-        if((node = grab(date)) == null)
+        if((node = grab(date)) == null || head == null)
             return null;
 
         return node.record.getMax();
@@ -66,11 +66,13 @@ public class NodeCoin {
         StringBuilder sb = new StringBuilder();
         while(!record.isEmpty())
             sb.append(record.removeMax().toString()).append("\n");
-        sb.deleteCharAt(sb.length()-1);
+        
+        if(sb.length() != 0)
+            sb.deleteCharAt(sb.length()-1);
 
         detatch(node);
 
-        return sb.toString();        
+        return sb.length() == 0? null: sb.toString();        
     }
 
 
