@@ -28,6 +28,22 @@ public class UserInterface{
             System.out.print(response == null? "": response + "\n");
         }
     }
+    
+    public String test(String testCase){
+        Scanner input = new Scanner(testCase);
+
+        StringBuilder response = new StringBuilder();
+        String temp;
+        while(input.hasNextLine()){
+            temp = parse(input.nextLine());
+            if(temp == null)
+                continue;
+            
+            response.append(temp).append("\n");
+        }
+        response.deleteCharAt(response.length()-1);
+        return response.toString();
+    }
 
 
     private String parse(String line){
@@ -58,7 +74,8 @@ public class UserInterface{
                 break;
 
             case REMOVE_MAX:
-                nodeCoin.removeMax(date);
+                if(!nodeCoin.removeMax(date))
+                    output = "-1";
                 break;
 
             case GET_ALL:
