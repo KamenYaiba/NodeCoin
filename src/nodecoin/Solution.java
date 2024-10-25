@@ -47,52 +47,111 @@ public class Solution {
     
     class MaxHeap {
     
-        private int size = 0;
-        private int capacity;
-        private int lastTNum = 0;
-        private Transaction transactions[];
+        private Transaction[] heap;
+    private int capacity;
+    private int currentSize;
 
-        public MaxHeap(int capacity){
+    // Constructor for the MaxHeap
+    public MaxHeap(int capacity) {
+        this.capacity = capacity;
+        this.currentSize = 0;
+        this.heap = new Transaction[capacity]; 
+    }
+
+    
+    public boolean insert(Transaction t) {
+        if (currentSize >= capacity) {
+            System.out.println("Heap is full");
+            return false; 
         }
+        heap[currentSize] = t;    
+        swim(currentSize);        
+        currentSize++;
+        return true;              
+    }
 
+    
+    public Transaction removeMax() {
+        if (currentSize == 0) {
+            System.out.println("Heap is empty");
+            return null; 
+        }        
+        Transaction max = heap[0];    //max transaction at root       
+        swap(0, --currentSize);     //swap last transaction to the root        
+        sink(0);                    
+        heap[currentSize] = null;     //clear removed transaction       
+        return max;
+    }
 
-        public boolean insert(double amount){
-            return true;
+    // Swim method to restore the heap property by moving a node up
+    private void swim(int k) {
+        while (k > 0 && heap[getParent(k)].compareTo(heap[k]) < 0) { // Parent is smaller than current
+            swap(k, getParent(k));
+            k = getParent(k);
         }
+    }
 
-
-        public Transaction removeMax(){
-            return null;
+    
+    private void sink(int k) {
+        while (getLeftChild(k) < currentSize) { 
+            int j = getLeftChild(k);            
+            if (j + 1 < currentSize && heap[j].compareTo(heap[j + 1]) < 0) {
+                j++;  // Right child exists and is larger
+            }
+            if (heap[k].compareTo(heap[j]) >= 0) {
+                break;  // Parent is larger than both children
+            }
+            swap(k, j);
+            k = j;
         }
+    }
+
+    
+    private int getParent(int k) 
+    {
+     return (k - 1) / 2; 
+    }
+    private int getLeftChild(int k) 
+    { 
+        return 2 * k + 1; 
+    }
+    private int getRightChild(int k) 
+    { 
+        return 2 * k + 2; 
+    }
+
+    
+    private void swap(int i, int j) {
+        Transaction temp = heap[i];
+        heap[i] = heap[j];
+        heap[j] = temp;
+    }
+
+    
+    public boolean isEmpty() {
+        return currentSize == 0;
+    }
+}
 
 
-        public Transaction getMax(){
-            return null;
-        }
+class Transaction implements Comparable<Transaction> {
+    double tAmt;  
+    int tNum;     
 
-        public boolean isEmpty(){
-            return false;
-        }
+    public Transaction(double tAmt, int tNum) {
+        this.tAmt = tAmt;
+        this.tNum = tNum;
+    }
 
-        private void swap(int i, int j){
-        }
+    @Override // Compare based on transaction amount
+    public int compareTo(Transaction other) {
+        return Double.compare(this.tAmt, other.tAmt);  
+    }
 
-        private void swim(int i){
-
-        }
-
-
-        private void sink(int i){
-
-        }
-
-        private int getParent(int child){
-            return 0;
-        }
-
-        private int getRChild(int parent){
-            return 0;
-        }
+    @Override
+    public String toString() {
+        return tAmt + " " + tNum;
+    }
     }
     
     
