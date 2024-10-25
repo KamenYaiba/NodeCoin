@@ -19,31 +19,79 @@ public class Solution {
     
     class Transaction{
         double amount;
-        double number = 0;
+        int number = 0;
 
+        public Transaction(double amount, int number){
+            this.amount = amount;
+            this.number = number;
+        }
+        
+        public int compare(Transaction other){
+            return(this.amount > other.amount? 1: this.amount == other.amount? 0: -1);
+        }
+        
+        public String getNumber(){
+            return String.valueOf(number);
+        }
+        
+        public String getAmount(){
+            return String.valueOf(amount);
+        }
+        
         @Override
         public String toString(){
-            return null;
+            return getAmount() + " " + getNumber();
         }
     }
     
     
     class MaxHeap {
     
-        public Transaction getMax(){
-            return null;
+        private int size = 0;
+        private int capacity;
+        private int lastTNum = 0;
+        private Transaction transactions[];
+
+        public MaxHeap(int capacity){
         }
+
+
+        public boolean insert(double amount){
+            return true;
+        }
+
 
         public Transaction removeMax(){
             return null;
         }
 
-        public boolean isEmpty(){
-            return false; //
+
+        public Transaction getMax(){
+            return null;
         }
 
-        public boolean insert(double amount){
+        public boolean isEmpty(){
             return false;
+        }
+
+        private void swap(int i, int j){
+        }
+
+        private void swim(int i){
+
+        }
+
+
+        private void sink(int i){
+
+        }
+
+        private int getParent(int child){
+            return 0;
+        }
+
+        private int getRChild(int parent){
+            return 0;
         }
     }
     
@@ -59,7 +107,7 @@ public class Solution {
 
             Node(String date){
                 this.date = date;
-                this.record = new MaxHeap();
+                this.record = new MaxHeap(1000);
             }
 
             @Override
@@ -112,8 +160,9 @@ public class Solution {
 
             StringBuilder sb = new StringBuilder();
             while(!record.isEmpty())
-                sb.append(record.removeMax().amount).append(" ");
-
+                sb.append(record.removeMax().toString()).append("\n");
+            sb.deleteCharAt(sb.length()-1);
+            
             detatch(node);
 
             return sb.toString();        
@@ -186,9 +235,11 @@ public class Solution {
 
         NodeCoin nodeCoin;
 
+
         public UserInterface(){
             nodeCoin = new NodeCoin();
         }
+
 
         public void run(){
             Scanner input = new Scanner(System.in);
@@ -200,35 +251,48 @@ public class Solution {
             }
         }
 
-        private String parse(String line){
 
+        private String parse(String line){
             Scanner reader = new Scanner(line);
+            if(!reader.hasNextInt())
+                return "-1";
             int operation = reader.nextInt();
+            if(!reader.hasNext())
+                return "-1";
             String date = reader.next();
-            //optional
-            double amount = reader.hasNextDouble()? reader.nextDouble(): -1;
+
 
             String output = null;
 
             switch(operation){
                 case INSERT:
+                    if(!reader.hasNextDouble()){
+                        output = "-1";
+                        break;
+                    }
+                    double amount = reader.nextDouble();
                     nodeCoin.insert(date, amount);
                     break;
+
                 case GET_MAX:
                     Transaction t = nodeCoin.getMax(date);
                     output = (t == null? "-1": t.toString());
                     break;
+
                 case REMOVE_MAX:
                     nodeCoin.removeMax(date);
                     break;
+
                 case GET_ALL:
                     String s = nodeCoin.getAll(date);
                     output = (s == null? "-1": s);
                     break;
+
                 default:
                     output = "-1";
             }
+
             return output;
-        }  
+        }
     }
 }

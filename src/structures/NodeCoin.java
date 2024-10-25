@@ -1,5 +1,6 @@
 package structures;
 
+
 // @author mio
 public class NodeCoin {
     
@@ -8,23 +9,23 @@ public class NodeCoin {
         String date;
         Node nextHash = null;
         Node prevHash = null;
-        
+
         Node(String date){
             this.date = date;
-            this.record = new MaxHeap();
+            this.record = new MaxHeap(1000);
         }
-        
+
         @Override
         public String toString(){
             return "date: " + date + "\n\n" + record.toString();
         }
     }
-    
+
     private Node head = null;
     private Node tail = null;
     private long size = 0;
 
-    
+
     public boolean insert(String date, double amount){
         Node node;
         if((node = grab(date)) == null){
@@ -33,55 +34,56 @@ public class NodeCoin {
         node.record.insert(amount);
         return true;
     }
-    
-    
+
+
     public Transaction getMax(String date){
         Node node;
         if((node = grab(date)) == null)
             return null;
-        
+
         return node.record.getMax();
     }
-    
-    
+
+
     public boolean removeMax(String date){
         Node node;
         if((node = grab(date)) == null)
             return false;
-        
+
         node.record.removeMax();
-       
+
         return true;
     }
-    
-    
+
+
     public String getAll(String date){
         Node node;
         if((node = grab(date)) == null)
             return null;
-        
+
         MaxHeap record = node.record;
-        
+
         StringBuilder sb = new StringBuilder();
         while(!record.isEmpty())
-            sb.append(record.removeMax().amount).append(" ");
-        
+            sb.append(record.removeMax().toString()).append("\n");
+        sb.deleteCharAt(sb.length()-1);
+
         detatch(node);
-        
+
         return sb.toString();        
     }
-    
-    
+
+
     public long getSize(){
         return size;
     }
-    
-    
+
+
     public boolean contains(String date){
         return grab(date) != null;
     }
-    
-    
+
+
     private boolean detatch(Node node){
         try{
             if(node != head)
@@ -99,8 +101,8 @@ public class NodeCoin {
         size--;
         return true; 
     }
-    
-    
+
+
     private Node grab(String date){
         Node itr = head;
         for(int i = 0; i < size; i++){
@@ -110,8 +112,8 @@ public class NodeCoin {
         }
         return null;
     }
-    
-    
+
+
     private Node addNewNode(String date){
         Node node = new Node(date);
         if(size == 0){
@@ -122,7 +124,7 @@ public class NodeCoin {
         node.prevHash = tail;
         tail.nextHash = node;
         tail = node;
-        
+
         size++;
         return node;
     }
