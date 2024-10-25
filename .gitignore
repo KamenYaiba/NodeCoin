@@ -3,3 +3,4 @@ build.xml
 .gitattributes
 nbproject
 /build/
+nbproject/private/private.properties
