@@ -101,7 +101,7 @@ public class NodeCoin {
         if(sb.length() != 0)
             sb.deleteCharAt(sb.length()-1);
 
-        detatch(node);
+        detach(node);
 
         return sb.length() == 0? null: sb.toString();        
     }
@@ -117,22 +117,22 @@ public class NodeCoin {
     }
 
 
-    private boolean detatch(Node node){
+    private boolean detach(Node node){
         if(node.date.equals(lastAccessedNode.date))
             lastAccessedNode = null;
-        try{
+        if(head != tail){
             if(node != head)
                 node.prevHash.nextHash = node.nextHash;
             else
                 head = head.nextHash;
+            
             if(node != tail)
                 node.nextHash.prevHash = node.prevHash;
             else
                 tail = tail.prevHash;
         }
-        catch(NullPointerException e){
-            return false;
-        }
+        else
+            head = tail = null;
         size--;
         return true; 
     }
