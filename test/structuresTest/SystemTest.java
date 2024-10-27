@@ -92,6 +92,11 @@ public class SystemTest {
             else
                 System.out.println("TEST " + (i+1) + ": FAIL :(");
         }
-
+        
+        if(ui.correctOrder())
+            System.out.println("TEST 6: PASS \\(^^)/");
+        else
+             System.out.println("TEST 6: FAIL :(");
     }
+    
 }

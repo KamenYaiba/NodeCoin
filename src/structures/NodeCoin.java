@@ -3,6 +3,10 @@ package structures;
 
 // @author mio
 public class NodeCoin {
+    private Node head = null;
+    private Node tail = null;
+    private Node lastAccessedNode;
+    private long size = 0;
     static final int DATE_LENGTH = 8;
     
     private class Node{
@@ -40,10 +44,6 @@ public class NodeCoin {
             return false;
         }
     }
-
-    private Node head = null;
-    private Node tail = null;
-    private long size = 0;
 
 
     public boolean insert(String date, double amount){
@@ -118,6 +118,8 @@ public class NodeCoin {
 
 
     private boolean detatch(Node node){
+        if(node.date.equals(lastAccessedNode.date))
+            lastAccessedNode = null;
         try{
             if(node != head)
                 node.prevHash.nextHash = node.nextHash;
@@ -137,10 +139,15 @@ public class NodeCoin {
 
 
     private Node grab(String date){
+        if(lastAccessedNode != null && date.equals(lastAccessedNode.date))
+            return lastAccessedNode;
+        
         Node itr = head;
         for(int i = 0; i < size; i++){
-            if(itr.date.equals(date))
+            if(itr.date.equals(date)){
+                lastAccessedNode = itr;
                 return itr;
+            }   
             itr = itr.nextHash;
         }
         return null;
@@ -150,7 +157,7 @@ public class NodeCoin {
     private Node addNewNode(String date){
         Node node = new Node(date);
         if(size == 0){
-            head = tail = node;
+            head = tail = lastAccessedNode = node;
             size++;
             return node;
         }
@@ -213,5 +220,16 @@ public class NodeCoin {
             return false;
         
         return true;    
+    }
+    
+    //for testing purposes only
+    public String[] datesToString(){
+        Node itr = head;
+        String[] array = new String[(int)size];
+        for(int i = 0; i < size; i++){
+            array[i] = itr.date;
+            itr = itr.nextHash;
+        }
+        return array;
     }
 }

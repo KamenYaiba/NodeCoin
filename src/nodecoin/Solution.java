@@ -84,22 +84,26 @@ public class Solution {
     }
     
     class NodeCoin {
+        private Node head = null;
+        private Node tail = null;
+        private Node lastAccessedNode;
+        private int size = 0;
         static final int DATE_LENGTH = 8;
 
         private class Node{
-            MaxHeap record;
+            MaxHeap root;
             String date;
             Node nextHash = null;
             Node prevHash = null;
 
             Node(String date){
                 this.date = date;
-                this.record = new MaxHeap(1000);
+                this.root = new MaxHeap(1000);
             }
 
             @Override
             public String toString(){
-                return "date: " + date + "\n\n" + record.toString();
+                return "date: " + date + "\n\n" + root.toString();
             }
 
             public boolean lessThan(Node other){
@@ -122,10 +126,6 @@ public class Solution {
             }
         }
 
-        private Node head = null;
-        private Node tail = null;
-        private long size = 0;
-
 
         public boolean insert(String date, double amount){
             if(date.length() != 8)
@@ -137,7 +137,7 @@ public class Solution {
                 node = addNewNode(date);
             }
             Transaction t = new Transaction(amount);
-            node.record.insert(t);
+            node.root.insert(t);
             return true;
         }
 
@@ -149,7 +149,7 @@ public class Solution {
             if((node = grab(date)) == null || head == null)
                 return null;
 
-            return node.record.getMax();
+            return node.root.getMax();
         }
 
 
@@ -160,7 +160,7 @@ public class Solution {
             if((node = grab(date)) == null)
                 return false;
 
-            node.record.removeMax();
+            node.root.removeMax();
 
             return true;
         }
@@ -173,7 +173,7 @@ public class Solution {
             if((node = grab(date)) == null)
                 return null;
 
-            MaxHeap record = node.record;
+            MaxHeap record = node.root;
 
             StringBuilder sb = new StringBuilder();
             while(!record.isEmpty())
@@ -201,6 +201,8 @@ public class Solution {
 
 
         private boolean detatch(Node node){
+            if(node.date.equals(lastAccessedNode.date))
+                lastAccessedNode = null;
             try{
                 if(node != head)
                     node.prevHash.nextHash = node.nextHash;
@@ -220,10 +222,15 @@ public class Solution {
 
 
         private Node grab(String date){
+            if(lastAccessedNode != null && date.equals(lastAccessedNode.date))
+                return lastAccessedNode;
+
             Node itr = head;
             for(int i = 0; i < size; i++){
-                if(itr.date.equals(date))
+                if(itr.date.equals(date)){
+                    lastAccessedNode = itr;
                     return itr;
+                }   
                 itr = itr.nextHash;
             }
             return null;
@@ -233,7 +240,7 @@ public class Solution {
         private Node addNewNode(String date){
             Node node = new Node(date);
             if(size == 0){
-                head = tail = node;
+                head = tail = lastAccessedNode = node;
                 size++;
                 return node;
             }
@@ -301,11 +308,13 @@ public class Solution {
     
     class MaxHeap {
     
-        private int size = 0;
+        private int currentSize = 0;
         private int capacity;
         private int lastTNum = 0;
         private Transaction transactions[];
 
+
+        // Constructor for the MaxHeap
         public MaxHeap(int capacity){
             this.capacity = capacity;
             this.transactions = new Transaction[capacity];
@@ -313,23 +322,23 @@ public class Solution {
 
 
         public boolean insert(Transaction t){
-            if(size == capacity)
+            if(currentSize == capacity)
                 return false;
 
-            t.number = ++lastTNum;
-            transactions[size++] = t;
+            t.tNum = ++lastTNum;
+            transactions[currentSize++] = t;
 
-            swim(size - 1);
+            swim(currentSize - 1);
             return true;
         }
 
 
         public Transaction removeMax(){
-            if(size == 0)
+            if(currentSize == 0)
                 return null;
 
-            Transaction max = transactions[0];
-            swap(0, --size);
+            Transaction max = transactions[0]; //max transaction at root  
+            swap(0, --currentSize); //swap last transaction to the root  
             sink(0);
 
             return max;  
@@ -337,11 +346,11 @@ public class Solution {
 
 
         public Transaction getMax(){
-            return size == 0? null : transactions[0];
+            return currentSize == 0? null : transactions[0];
         }
 
         public boolean isEmpty(){
-            return size == 0;
+            return currentSize == 0;
         }
 
         private void swap(int i, int j){
@@ -350,10 +359,11 @@ public class Solution {
             transactions[j] = temp;
         }
 
+        // Swim method to restore the heap property by moving a node up
         private void swim(int i){
             while(i > 0){
                 int parent = getParent(i);
-                if(transactions[i].compareTo(transactions[parent]) == 1)
+                if(transactions[i].compareTo(transactions[parent]) == 1) // Parent is smaller than current
                     swap(i, parent);
                 else
                     break;
@@ -367,14 +377,14 @@ public class Solution {
             int child;
             while(true){
                 child = getRChild(i);
-                if(!(child < size))
+                if(!(child < currentSize))
                     break;
 
-                if(child + 1 < size && transactions[child].compareTo(transactions[child + 1]) == -1)
-                    child++;
+                if(child + 1 < currentSize && transactions[child].compareTo(transactions[child + 1]) == -1)
+                    child++; // left child exists and is larger
 
                 if(transactions[i].compareTo(transactions[child]) == 1)
-                    break;
+                    break; // Parent is larger than both children
 
                 swap(i, child);
                 i = child;        
@@ -391,23 +401,23 @@ public class Solution {
     }
     
     class Transaction{
-        double amount;
-        int number = 0;
+        double tAmt;
+        int tNum = 0;
 
         public Transaction(double amount){
-            this.amount = amount;
+            this.tAmt = amount;
         }
 
         public int compareTo(Transaction other){
-            return(this.amount > other.amount? 1: this.amount == other.amount? 0: -1);
+            return(this.tAmt > other.tAmt? 1: this.tAmt == other.tAmt? 0: -1);
         }
 
         public String getNumber(){
-            return String.valueOf(number);
+            return String.valueOf(tNum);
         }
 
         public String getAmount(){
-            return String.valueOf(amount);
+            return String.valueOf(tAmt);
         }
 
         @Override

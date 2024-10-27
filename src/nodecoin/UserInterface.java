@@ -1,6 +1,7 @@
 package nodecoin;
 
 // @author mio
+import java.util.Arrays;
 import java.util.Scanner;
 import structures.*;
 
@@ -29,6 +30,7 @@ public class UserInterface{
         }
     }
     
+    //for testing
     public String test(String testCase){
         Scanner input = new Scanner(testCase);
 
@@ -90,5 +92,35 @@ public class UserInterface{
         }
 
         return output;
+    }
+    
+    //for testing
+    public boolean correctOrder(){
+        String array[] = nodeCoin.datesToString();
+        for(int i = 0; i < array.length-1; i++){
+            if(lessThan(array[i+1], array[i]))
+                return false;
+        }
+        return true;
+    }
+    
+    //for testing
+    private boolean lessThan(String date1, String date2){
+        int comp = date1.substring(4).compareTo(date2.substring(4));
+        if( comp < 0)
+            return true;
+        if(comp > 0)
+            return false;
+
+        comp = date1.substring(2, 4).compareTo(date2.substring(2, 4));
+        if(comp < 0)
+            return true;
+        if(comp > 0)
+            return false;
+
+        comp = date1.substring(0, 2).compareTo(date2.substring(0, 2));
+        if(comp < 0)
+            return true;
+        return false;
     }
 }
