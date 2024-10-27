@@ -3,6 +3,7 @@ package structures;
 
 // @author mio
 public class NodeCoin {
+    static final int DATE_LENGTH = 8;
     
     private class Node{
         MaxHeap record;
@@ -19,6 +20,25 @@ public class NodeCoin {
         public String toString(){
             return "date: " + date + "\n\n" + record.toString();
         }
+        
+        public boolean lessThan(Node other){
+            int comp = this.date.substring(4).compareTo(other.date.substring(4));
+            if( comp < 0)
+                return true;
+            if(comp > 0)
+                return false;
+            
+            comp = this.date.substring(2, 4).compareTo(other.date.substring(2, 4));
+            if(comp < 0)
+                return true;
+            if(comp > 0)
+                return false;
+            
+            comp = this.date.substring(0, 2).compareTo(other.date.substring(0, 2));
+            if(comp < 0)
+                return true;
+            return false;
+        }
     }
 
     private Node head = null;
@@ -27,11 +47,16 @@ public class NodeCoin {
 
 
     public boolean insert(String date, double amount){
+        if(date.length() != 8)
+            date = "0" + date;
+        if(!validDate(date))
+            return false;
         Node node;
         if((node = grab(date)) == null){
             node = addNewNode(date);
         }
-        node.record.insert(amount);
+        Transaction t = new Transaction(amount);
+        node.record.insert(t);
         return true;
     }
 
@@ -123,11 +148,64 @@ public class NodeCoin {
             size++;
             return node;
         }
+        
+        if(tail.lessThan(node)){
+            return addToEnd(node);
+        }
+        Node itr;
+        if(node.lessThan(head))
+            return addToStart(node);
+        else{
+            itr = head.nextHash;
+            for(int i = 0; i < size-1; i++){
+                if(node.lessThan(itr))
+                    break;
+                itr = itr.nextHash;
+            }
+        }
+        
+        node.prevHash = itr.prevHash;
+        itr.prevHash = node;
+        if(node.prevHash != null)
+            node.prevHash.nextHash = node;
+        node.nextHash = itr;
+        
+        size++;
+        return node;
+    }
+    
+    
+    private Node addToEnd(Node node){
         node.prevHash = tail;
         tail.nextHash = node;
         tail = node;
 
         size++;
         return node;
+    }
+    
+    private Node addToStart(Node node){
+        node.nextHash = head;
+        head.prevHash = node;
+        head = node;
+        
+        size++;
+        return node;
+    }
+    
+    
+    private boolean validDate(String s){
+        if(s.length() != DATE_LENGTH)
+            return false;
+        for(int i = 0; i < DATE_LENGTH; i++)
+            if(!Character.isDigit(s.charAt(i)))
+                return false;
+
+        if(s.substring(0, 2).compareTo("01") < 0 || s.substring(0, 2).compareTo("31") > 0)
+            return false;
+        if(s.substring(2, 4).compareTo("01") < 0 || s.substring(2, 4).compareTo("12") > 0)
+            return false;
+        
+        return true;    
     }
 }

@@ -5,12 +5,11 @@ public class Transaction{
     double amount;
     int number = 0;
 
-    public Transaction(double amount, int number){
+    public Transaction(double amount){
         this.amount = amount;
-        this.number = number;
     }
 
-    public int compare(Transaction other){
+    public int compareTo(Transaction other){
         return(this.amount > other.amount? 1: this.amount == other.amount? 0: -1);
     }
 
