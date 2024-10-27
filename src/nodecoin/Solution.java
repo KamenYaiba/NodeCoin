@@ -1,11 +1,6 @@
 package nodecoin;
 
-// @author mio
-
 import java.util.Scanner;
-
-
-
 
 //hackerrank version
 //this is where to put all classes in one file to submit on hr
@@ -17,121 +12,80 @@ public class Solution {
         ui.run();
     }
     
-    
-    
-    class MaxHeap {
-    
-        private Transaction[] heap;
-        private int capacity;
-        private int currentSize;
+    class UserInterface{
 
-        // Constructor for the MaxHeap
-        public MaxHeap(int capacity) {
-            this.capacity = capacity;
-            this.currentSize = 0;
-            this.heap = new Transaction[capacity]; 
+        final int INSERT = 1;
+        final int GET_MAX = 2;
+        final int REMOVE_MAX = 3;
+        final int GET_ALL = 4;
+
+        NodeCoin nodeCoin;
+
+
+        public UserInterface(){
+            nodeCoin = new NodeCoin();
         }
 
 
-        public boolean insert(Transaction t) {
-            if (currentSize >= capacity) {
-                System.out.println("Heap is full");
-                return false; 
-            }
-            heap[currentSize] = t;    
-            swim(currentSize);        
-            currentSize++;
-            return true;              
-        }
+        public void run(){
+            Scanner input = new Scanner(System.in);
 
-
-        public Transaction removeMax() {
-            if (currentSize == 0) {
-                System.out.println("Heap is empty");
-                return null; 
-            }        
-            Transaction max = heap[0];    //max transaction at root       
-            swap(0, --currentSize);     //swap last transaction to the root        
-            sink(0);                    
-            heap[currentSize] = null;     //clear removed transaction       
-            return max;
-        }
-
-        // Swim method to restore the heap property by moving a node up
-        private void swim(int k) {
-            while (k > 0 && heap[getParent(k)].compareTo(heap[k]) < 0) { // Parent is smaller than current
-                swap(k, getParent(k));
-                k = getParent(k);
+            String response;
+            while(input.hasNextLine()){
+                response = parse(input.nextLine());
+                System.out.print(response == null? "": response + "\n");
             }
         }
 
+        private String parse(String line){
+            Scanner reader = new Scanner(line);
+            if(!reader.hasNextInt())
+                return "-1";
+            int operation = reader.nextInt();
+            if(!reader.hasNext())
+                return "-1";
+            String date = reader.next();
 
-        private void sink(int k) {
-            while (getLeftChild(k) < currentSize) { 
-                int j = getLeftChild(k);            
-                if (j + 1 < currentSize && heap[j].compareTo(heap[j + 1]) < 0) {
-                    j++;  // Right child exists and is larger
-                }
-                if (heap[k].compareTo(heap[j]) >= 0) {
-                    break;  // Parent is larger than both children
-                }
-                swap(k, j);
-                k = j;
+
+            String output = null;
+
+            switch(operation){
+                case INSERT:
+                    if(!reader.hasNextDouble()){
+                        output = "-1";
+                        break;
+                    }
+                    double amount = reader.nextDouble();
+                    nodeCoin.insert(date, amount);
+                    break;
+
+                case GET_MAX:
+                    Transaction t = nodeCoin.getMax(date);
+                    output = t == null? "-1": t.toString();
+
+                    break;
+
+                case REMOVE_MAX:
+                    if(!nodeCoin.removeMax(date))
+                        output = "-1";
+                    break;
+
+                case GET_ALL:
+                    String s = nodeCoin.getAll(date);
+                    output = (s == null? "-1": s);
+                    break;
+
+                default:
+                    output = "-1";
             }
+
+            return output;
         }
-
-
-        private int getParent(int k) 
-        {
-         return (k - 1) / 2; 
-        }
-        private int getLeftChild(int k) 
-        { 
-            return 2 * k + 1; 
-        }
-        private int getRightChild(int k) 
-        { 
-            return 2 * k + 2; 
-        }
-
-    
-        private void swap(int i, int j) {
-            Transaction temp = heap[i];
-            heap[i] = heap[j];
-            heap[j] = temp;
-        }
-
-
-        public boolean isEmpty() {
-            return currentSize == 0;
-        }
-}
-
-
-class Transaction implements Comparable<Transaction> {
-    double tAmt;  
-    int tNum;     
-
-    public Transaction(double tAmt, int tNum) {
-        this.tAmt = tAmt;
-        this.tNum = tNum;
     }
-
-    @Override // Compare based on transaction amount
-    public int compareTo(Transaction other) {
-        return Double.compare(this.tAmt, other.tAmt);  
-    }
-
-    @Override
-    public String toString() {
-        return tAmt + " " + tNum;
-    }
-    }
-    
-    
     
     class NodeCoin {
-    
+        static final int DATE_LENGTH = 8;
+
         private class Node{
             MaxHeap record;
             String date;
@@ -147,6 +101,25 @@ class Transaction implements Comparable<Transaction> {
             public String toString(){
                 return "date: " + date + "\n\n" + record.toString();
             }
+
+            public boolean lessThan(Node other){
+                int comp = this.date.substring(4).compareTo(other.date.substring(4));
+                if( comp < 0)
+                    return true;
+                if(comp > 0)
+                    return false;
+
+                comp = this.date.substring(2, 4).compareTo(other.date.substring(2, 4));
+                if(comp < 0)
+                    return true;
+                if(comp > 0)
+                    return false;
+
+                comp = this.date.substring(0, 2).compareTo(other.date.substring(0, 2));
+                if(comp < 0)
+                    return true;
+                return false;
+            }
         }
 
         private Node head = null;
@@ -155,18 +128,23 @@ class Transaction implements Comparable<Transaction> {
 
 
         public boolean insert(String date, double amount){
+            if(date.length() != 8)
+                date = "0" + date;
+            if(!validDate(date))
+                return false;
             Node node;
             if((node = grab(date)) == null){
                 node = addNewNode(date);
             }
-            node.record.insert(amount);
+            Transaction t = new Transaction(amount);
+            node.record.insert(t);
             return true;
         }
 
 
         public Transaction getMax(String date){
             Node node;
-            if((node = grab(date)) == null)
+            if((node = grab(date)) == null || head == null)
                 return null;
 
             return node.record.getMax();
@@ -194,11 +172,13 @@ class Transaction implements Comparable<Transaction> {
             StringBuilder sb = new StringBuilder();
             while(!record.isEmpty())
                 sb.append(record.removeMax().toString()).append("\n");
-            sb.deleteCharAt(sb.length()-1);
-            
+
+            if(sb.length() != 0)
+                sb.deleteCharAt(sb.length()-1);
+
             detatch(node);
 
-            return sb.toString();        
+            return sb.length() == 0? null: sb.toString();        
         }
 
 
@@ -249,6 +229,34 @@ class Transaction implements Comparable<Transaction> {
                 size++;
                 return node;
             }
+
+            if(tail.lessThan(node)){
+                return addToEnd(node);
+            }
+            Node itr;
+            if(node.lessThan(head))
+                return addToStart(node);
+            else{
+                itr = head.nextHash;
+                for(int i = 0; i < size-1; i++){
+                    if(node.lessThan(itr))
+                        break;
+                    itr = itr.nextHash;
+                }
+            }
+
+            node.prevHash = itr.prevHash;
+            itr.prevHash = node;
+            if(node.prevHash != null)
+                node.prevHash.nextHash = node;
+            node.nextHash = itr;
+
+            size++;
+            return node;
+        }
+
+
+        private Node addToEnd(Node node){
             node.prevHash = tail;
             tail.nextHash = node;
             tail = node;
@@ -256,77 +264,148 @@ class Transaction implements Comparable<Transaction> {
             size++;
             return node;
         }
-    }
-    
-    
-    class UserInterface{
 
-        final int INSERT = 1;
-        final int GET_MAX = 2;
-        final int REMOVE_MAX = 3;
-        final int GET_ALL = 4;
+        private Node addToStart(Node node){
+            node.nextHash = head;
+            head.prevHash = node;
+            head = node;
 
-        NodeCoin nodeCoin;
-
-
-        public UserInterface(){
-            nodeCoin = new NodeCoin();
+            size++;
+            return node;
         }
 
 
-        public void run(){
-            Scanner input = new Scanner(System.in);
+        private boolean validDate(String s){
+            if(s.length() != DATE_LENGTH)
+                return false;
+            for(int i = 0; i < DATE_LENGTH; i++)
+                if(!Character.isDigit(s.charAt(i)))
+                    return false;
 
-            String response;
-            while(input.hasNextLine()){
-                response = parse(input.nextLine());
-                System.out.print(response == null? "": response + "\n");
+            if(s.substring(0, 2).compareTo("01") < 0 || s.substring(0, 2).compareTo("31") > 0)
+                return false;
+            if(s.substring(2, 4).compareTo("01") < 0 || s.substring(2, 4).compareTo("12") > 0)
+                return false;
+
+            return true;    
+        }
+    }
+    
+    class MaxHeap {
+    
+        private int size = 0;
+        private int capacity;
+        private int lastTNum = 0;
+        private Transaction transactions[];
+
+        public MaxHeap(int capacity){
+            this.capacity = capacity;
+            this.transactions = new Transaction[capacity];
+        }
+
+
+        public boolean insert(Transaction t){
+            if(size == capacity)
+                return false;
+
+            t.number = ++lastTNum;
+            transactions[size++] = t;
+
+            swim(size - 1);
+            return true;
+        }
+
+
+        public Transaction removeMax(){
+            if(size == 0)
+                return null;
+
+            Transaction max = transactions[0];
+            swap(0, --size);
+            sink(0);
+
+            return max;  
+        }
+
+
+        public Transaction getMax(){
+            return size == 0? null : transactions[0];
+        }
+
+        public boolean isEmpty(){
+            return size == 0;
+        }
+
+        private void swap(int i, int j){
+            Transaction temp = transactions[i];
+            transactions[i] = transactions[j];
+            transactions[j] = temp;
+        }
+
+        private void swim(int i){
+            while(i > 0){
+                int parent = getParent(i);
+                if(transactions[i].compareTo(transactions[parent]) == 1)
+                    swap(i, parent);
+                else
+                    break;
+
+                i = parent;    
             }
         }
 
 
-        private String parse(String line){
-            Scanner reader = new Scanner(line);
-            if(!reader.hasNextInt())
-                return "-1";
-            int operation = reader.nextInt();
-            if(!reader.hasNext())
-                return "-1";
-            String date = reader.next();
-
-
-            String output = null;
-
-            switch(operation){
-                case INSERT:
-                    if(!reader.hasNextDouble()){
-                        output = "-1";
-                        break;
-                    }
-                    double amount = reader.nextDouble();
-                    nodeCoin.insert(date, amount);
+        private void sink(int i){
+            int child;
+            while(true){
+                child = getRChild(i);
+                if(!(child < size))
                     break;
 
-                case GET_MAX:
-                    Transaction t = nodeCoin.getMax(date);
-                    output = (t == null? "-1": t.toString());
+                if(child + 1 < size && transactions[child].compareTo(transactions[child + 1]) == -1)
+                    child++;
+
+                if(transactions[i].compareTo(transactions[child]) == 1)
                     break;
 
-                case REMOVE_MAX:
-                    if(!nodeCoin.removeMax(date))
-                        output = "-1";
-                    break;
-
-                case GET_ALL:
-                    String s = nodeCoin.getAll(date);
-                    output = (s == null? "-1": s);
-                    break;
-
-                default:
-                    output = "-1";
+                swap(i, child);
+                i = child;        
             }
+        }
 
-            return output;
+        private int getParent(int child){
+            return (child - 1) / 2;
+        }
+
+        private int getRChild(int parent){
+            return parent * 2 + 1;
         }
     }
+    
+    class Transaction{
+        double amount;
+        int number = 0;
+
+        public Transaction(double amount){
+            this.amount = amount;
+        }
+
+        public int compareTo(Transaction other){
+            return(this.amount > other.amount? 1: this.amount == other.amount? 0: -1);
+        }
+
+        public String getNumber(){
+            return String.valueOf(number);
+        }
+
+        public String getAmount(){
+            return String.valueOf(amount);
+        }
+
+        @Override
+        public String toString(){
+            return getAmount() + " " + getNumber();
+        }
+    }
+    
 }
