@@ -144,6 +144,8 @@ public class Solution {
 
         public Transaction getMax(String date){
             Node node;
+            if(date.length() != 8)
+                date = "0" + date;
             if((node = grab(date)) == null || head == null)
                 return null;
 
@@ -153,6 +155,8 @@ public class Solution {
 
         public boolean removeMax(String date){
             Node node;
+            if(date.length() != 8)
+                date = "0" + date;
             if((node = grab(date)) == null)
                 return false;
 
@@ -164,6 +168,8 @@ public class Solution {
 
         public String getAll(String date){
             Node node;
+            if(date.length() != 8)
+                date = "0" + date;
             if((node = grab(date)) == null)
                 return null;
 
@@ -188,6 +194,8 @@ public class Solution {
 
 
         public boolean contains(String date){
+            if(date.length() != 8)
+                date = 0 + date;
             return grab(date) != null;
         }
 

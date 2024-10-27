@@ -63,6 +63,8 @@ public class NodeCoin {
 
     public Transaction getMax(String date){
         Node node;
+        if(date.length() != 8)
+            date = "0" + date;
         if((node = grab(date)) == null || head == null)
             return null;
 
@@ -72,6 +74,8 @@ public class NodeCoin {
 
     public boolean removeMax(String date){
         Node node;
+        if(date.length() != 8)
+            date = "0" + date;
         if((node = grab(date)) == null)
             return false;
 
@@ -83,6 +87,8 @@ public class NodeCoin {
 
     public String getAll(String date){
         Node node;
+        if(date.length() != 8)
+            date = "0" + date;
         if((node = grab(date)) == null)
             return null;
 
