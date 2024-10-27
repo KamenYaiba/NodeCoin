@@ -41,7 +41,8 @@ public class UserInterface{
             
             response.append(temp).append("\n");
         }
-        response.deleteCharAt(response.length()-1);
+        if(response.length() != 0)
+            response.deleteCharAt(response.length()-1);
         return response.toString();
     }
 
@@ -70,7 +71,8 @@ public class UserInterface{
 
             case GET_MAX:
                 Transaction t = nodeCoin.getMax(date);
-                output = (t == null? "-1": t.toString());
+                output = t == null? "-1": t.toString();
+                
                 break;
 
             case REMOVE_MAX:
