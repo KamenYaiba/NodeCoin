@@ -8,6 +8,7 @@ public class NodeCoin {
     private Node lastAccessedNode;
     private long size = 0;
     static final int DATE_LENGTH = 8;
+    static final int HEAP_MAX_CAPACITY = 10000020;
     
     private class Node{
         MaxHeap record;
@@ -17,7 +18,7 @@ public class NodeCoin {
 
         Node(String date){
             this.date = date;
-            this.record = new MaxHeap(1000);
+            this.record = new MaxHeap(HEAP_MAX_CAPACITY);
         }
 
         @Override

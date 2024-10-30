@@ -29,24 +29,6 @@ public class UserInterface{
             System.out.print(response == null? "": response + "\n");
         }
     }
-    
-    //for testing
-    public String test(String testCase){
-        Scanner input = new Scanner(testCase);
-
-        StringBuilder response = new StringBuilder();
-        String temp;
-        while(input.hasNextLine()){
-            temp = parse(input.nextLine());
-            if(temp == null)
-                continue;
-            
-            response.append(temp).append("\n");
-        }
-        if(response.length() != 0)
-            response.deleteCharAt(response.length()-1);
-        return response.toString();
-    }
 
 
     private String parse(String line){
@@ -92,35 +74,5 @@ public class UserInterface{
         }
 
         return output;
-    }
-    
-    //for testing
-    public boolean correctOrder(){
-        String array[] = nodeCoin.datesToString();
-        for(int i = 0; i < array.length-1; i++){
-            if(lessThan(array[i+1], array[i]))
-                return false;
-        }
-        return true;
-    }
-    
-    //for testing
-    private boolean lessThan(String date1, String date2){
-        int comp = date1.substring(4).compareTo(date2.substring(4));
-        if( comp < 0)
-            return true;
-        if(comp > 0)
-            return false;
-
-        comp = date1.substring(2, 4).compareTo(date2.substring(2, 4));
-        if(comp < 0)
-            return true;
-        if(comp > 0)
-            return false;
-
-        comp = date1.substring(0, 2).compareTo(date2.substring(0, 2));
-        if(comp < 0)
-            return true;
-        return false;
     }
 }
