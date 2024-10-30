@@ -19,7 +19,7 @@ public class MaxHeap {
         if(currentSize == capacity)
             return false;
 
-        t.number = ++lastTNum;
+        t.tNum = ++lastTNum;
         transactions[currentSize++] = t;
 
         swim(currentSize - 1);

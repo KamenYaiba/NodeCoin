@@ -37,6 +37,7 @@ public class Solution {
             }
         }
 
+
         private String parse(String line){
             Scanner reader = new Scanner(line);
             if(!reader.hasNextInt())
@@ -87,8 +88,9 @@ public class Solution {
         private Node head = null;
         private Node tail = null;
         private Node lastAccessedNode;
-        private int size = 0;
+        private long size = 0;
         static final int DATE_LENGTH = 8;
+        static final int HEAP_MAX_CAPACITY = 10000;
 
         private class Node{
             MaxHeap root;
@@ -98,7 +100,7 @@ public class Solution {
 
             Node(String date){
                 this.date = date;
-                this.root = new MaxHeap(1000);
+                this.root = new MaxHeap(HEAP_MAX_CAPACITY);
             }
 
             @Override
@@ -194,8 +196,6 @@ public class Solution {
 
 
         public boolean contains(String date){
-            if(date.length() != 8)
-                date = 0 + date;
             return grab(date) != null;
         }
 
@@ -303,6 +303,17 @@ public class Solution {
                 return false;
 
             return true;    
+        }
+
+        //for testing purposes only
+        public String[] datesToString(){
+            Node itr = head;
+            String[] array = new String[(int)size];
+            for(int i = 0; i < size; i++){
+                array[i] = itr.date;
+                itr = itr.nextHash;
+            }
+            return array;
         }
     }
     
@@ -424,6 +435,5 @@ public class Solution {
         public String toString(){
             return getAmount() + " " + getNumber();
         }
-    }
-    
+    }   
 }

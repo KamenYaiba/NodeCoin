@@ -11,19 +11,19 @@ public class NodeCoin {
     static final int HEAP_MAX_CAPACITY = 10000020;
     
     private class Node{
-        MaxHeap record;
+        MaxHeap root;
         String date;
         Node nextHash = null;
         Node prevHash = null;
 
         Node(String date){
             this.date = date;
-            this.record = new MaxHeap(HEAP_MAX_CAPACITY);
+            this.root = new MaxHeap(HEAP_MAX_CAPACITY);
         }
 
         @Override
         public String toString(){
-            return "date: " + date + "\n\n" + record.toString();
+            return "date: " + date + "\n\n" + root.toString();
         }
         
         public boolean lessThan(Node other){
@@ -57,7 +57,7 @@ public class NodeCoin {
             node = addNewNode(date);
         }
         Transaction t = new Transaction(amount);
-        node.record.insert(t);
+        node.root.insert(t);
         return true;
     }
 
@@ -69,7 +69,7 @@ public class NodeCoin {
         if((node = grab(date)) == null || head == null)
             return null;
 
-        return node.record.getMax();
+        return node.root.getMax();
     }
 
 
@@ -80,7 +80,7 @@ public class NodeCoin {
         if((node = grab(date)) == null)
             return false;
 
-        node.record.removeMax();
+        node.root.removeMax();
 
         return true;
     }
@@ -93,7 +93,7 @@ public class NodeCoin {
         if((node = grab(date)) == null)
             return null;
 
-        MaxHeap record = node.record;
+        MaxHeap record = node.root;
 
         StringBuilder sb = new StringBuilder();
         while(!record.isEmpty())
